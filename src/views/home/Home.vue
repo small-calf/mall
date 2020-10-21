@@ -1,22 +1,16 @@
 <template>
   <div id="home" class="wrapper">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content"
-            ref="scroll"
-            :probe-type="3"
-            @scroll="contentScroll"
-            :pull-up-load="true"
-            @pullingUp="loadMore">
+    <scroll class="content" ref="scroll">
       <home-swiper :banners="banners"/>
       <recommend-view :recommends="recommends"/>
       <feature-view/>
       <tab-control class="tab-control"
-                   :titles="['流行', '新款', '精选']"
-                   @tabClick="tabClick"/>
+                   @tabClick="tabClick"
+                   :titles="['流行','新款','精选']"/>
       <good-list :goods="showGoods"/>
     </scroll>
-    <div>呵呵呵呵</div>
-    <back-top @click.native="backClick" v-show="isShowBackTop"/>
+    <back-top @click.native="backClick"/><!--组件不能直接监听：要这样监听：@click.native-->
   </div>
 </template>
 
@@ -50,12 +44,11 @@
         banners: [],
         recommends: [],
         goods: {
-          'pop': {page: 0, list: []},
-          'new': {page: 0, list: []},
-          'sell': {page: 0, list: []},
+          'pop' : {page: 0, list: []},
+          'new' : {page: 0, list: []},
+          'sell' : {page: 0, list: []},
         },
         currentType: 'pop',
-        isShowBackTop: false
       }
     },
     computed: {
@@ -64,60 +57,51 @@
       }
     },
     created() {
-      // 1.请求多个数据
-      this.getHomeMultidata()
-
-      // 2.请求商品数据
+      //1,请求多个数据
+      this.getHomeMultidata();
+      //2,请求商品数据
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
-    },
+      },
     methods: {
       /**
-       * 事件监听相关的方法
+       * 事件监听相关
        */
       tabClick(index) {
         switch (index) {
-          case 0:
-            this.currentType = 'pop'
-            break
-          case 1:
-            this.currentType = 'new'
-            break
-          case 2:
-            this.currentType = 'sell'
-            break
+          case 0: this.currentType = 'pop'
+              break
+          case 1: this.currentType = 'new'
+              break
+          case 2: this.currentType = 'sell'
+              break
         }
       },
+      //回到顶部
       backClick() {
-        this.$refs.scroll.scrollTo(0, 0)
-      },
-      contentScroll(position) {
-        this.isShowBackTop = (-position.y) > 1000
-      },
-      loadMore() {
-        this.getHomeGoods(this.currentType)
+        this.$refs.scroll.scrollTo(0,0)
       },
       /**
-       * 网络请求相关的方法
+       * 网络请求相关代码
        */
       getHomeMultidata() {
         getHomeMultidata().then(res => {
-          // this.result = res;
           this.banners = res.data.banner.list;
           this.recommends = res.data.recommend.list;
-        })
+        });
       },
       getHomeGoods(type) {
-        const page = this.goods[type].page + 1
+        const page = this.goods[type].page+1;
         getHomeGoods(type, page).then(res => {
-          console.log(res)
-          this.goods[type].list.push(...res.data.list)
+          // this.goods[type].list.push(...res.data.list)
+          for (let i = 0; i < res.data.list.length; i++) {
+            this.goods[type].list = res.data.list;
+          }
           this.goods[type].page += 1
-
-          this.$refs.scroll.finishPullUp()
         })
-      }
+      },
+
     }
   }
 </script>
@@ -157,8 +141,8 @@
   }
 
   /*.content {*/
-    /*height: calc(100% - 93px);*/
-    /*overflow: hidden;*/
-    /*margin-top: 44px;*/
+  /*  height: calc(100% - 93px);*/
+  /*  overflow: hidden;*/
+  /*  margin-top: 44px;*/
   /*}*/
 </style>

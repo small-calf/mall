@@ -28,7 +28,7 @@
         // /home -> item1(/category) = false
         // /home -> item1(/cart) = true
         // /home -> item1(/profile) = true
-        return this.$route.path.indexOf(this.path) !== -1
+        return this.$route.path.indexOf(this.path) !== -1//indexOf:返回某个指定的字符串值在字符串中首次出现的位置。
       },
       activeStyle() {
         return this.isActive ? {color: this.activeColor} : {}

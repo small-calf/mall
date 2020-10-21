@@ -53,7 +53,7 @@
       finishPullUp() {
         this.scroll.finishPullUp()
       }
-    }
+     }
   }
 </script>
 
